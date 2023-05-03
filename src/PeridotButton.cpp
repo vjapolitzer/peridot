@@ -31,12 +31,12 @@ void PeridotButton::setLongPressT(const unsigned long ms)
     _longPressT = ms;
 }
 
-void PeridotButton::attachPress(callbackFunc callback)
+void PeridotButton::attachRising(callbackFunc callback)
 {
     _countCallbackFunc = callback;
 }
 
-void PeridotButton::attachPress(paramCallbackFunc callback, void *param)
+void PeridotButton::attachRising(paramCallbackFunc callback, void *param)
 {
     _paramCountCallbackFunc = callback;
     _countCallbackFuncParam = param;

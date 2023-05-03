@@ -39,11 +39,11 @@ public:
      ********************/
     /// @brief Attach a callback to be called on rising edge of press
     /// @param callback: function pointer for callback
-    void attachPress(callbackFunc callback);
+    void attachRising(callbackFunc callback);
     /// @brief Attach a callback to be called on rising edge of press
     /// @param callback: function pointer for callback
     /// @param param: void pointer for callback function parameter
-    void attachPress(paramCallbackFunc callback, void *param);
+    void attachRising(paramCallbackFunc callback, void *param);
 
     /// @brief Attach a callback to be called after a press is detected
     /// @param callback: function pointer for callback

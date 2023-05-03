@@ -20,8 +20,8 @@ bool sendStateRequest(DE_MachineState_t reqState);
 /******************
  * BTN0 Callbacks *
  ******************/
-void onCountBTN0();
-void onPressBTN0();
+void onRisingBTN0();
+void onPressedBTN0();
 void onDoublePressBTN0();
 void onLongPressBTN0();
 // void onLongReleaseBTN0();
@@ -30,8 +30,8 @@ void onLongPressBTN0();
 /******************
  * BTN1 Callbacks *
  ******************/
-void onCountBTN1();
-void onPressBTN1();
+void onRisingBTN1();
+void onPressedBTN1();
 void onDoublePressBTN1();
 void onLongPressBTN1();
 // void onLongReleaseBTN1();

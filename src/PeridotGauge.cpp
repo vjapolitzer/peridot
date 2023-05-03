@@ -51,7 +51,7 @@ bool PeridotGauge::update()
             PeridotGauge::_drawIndL();
         }
 
-        show();
+        PeridotGauge::show();
         prevTime = currTime;
         return true;
     }

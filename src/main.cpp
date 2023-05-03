@@ -75,17 +75,17 @@ void loop()
 
 void setup1()
 {   
-    btn0.attachPress(onCountBTN0);
-    btn0.attachPressed(onPressBTN0);
+    btn0.attachRising(onRisingBTN0);
+    btn0.attachPressed(onPressedBTN0);
     btn0.attachDoublePressed(onDoublePressBTN0);
     btn0.attachLongPressStart(onLongPressBTN0);
-    // btn0.onLongPressStop(onLongReleaseBTN0);
+    // btn0.onLongPressStop(onLongPressStopBTN0);
 
-    btn1.attachPress(onCountBTN1);
-    btn1.attachPressed(onPressBTN1);
+    btn1.attachRising(onRisingBTN1);
+    btn1.attachPressed(onPressedBTN1);
     btn1.attachDoublePressed(onDoublePressBTN1);
     btn1.attachLongPressStart(onLongPressBTN1);
-    // btn1.onLongPressStop(onLongReleaseBTN1);
+    // btn1.onLongPressStop(onLongPressStopBTN1);
    
 }
 

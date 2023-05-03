@@ -12,12 +12,14 @@ bool sendStateRequest(DE_MachineState_t reqState)
 /******************
  * BTN0 Callbacks *
  ******************/
-void onCountBTN0()
+// TODO: Consider simplifying callbacks to raise flags and handle them
+//       inside nested switch-case to reduce repeated DEState switch-cases
+void onRisingBTN0()
 {
     gauge.indicateL((uint8_t)0b111);
 }
 
-void onPressBTN0()
+void onPressedBTN0()
 {
     Logger.info.println("BTN0 pressed");
     switch (myDE1.getState())
@@ -131,7 +133,7 @@ void onLongPressBTN0()
     }
 }
 
-// void onLongReleaseBTN0()
+// void onLongPressStopBTN0()
 // {
 //     Logger.info.println("BTN0 Long released");
 // }
@@ -139,12 +141,12 @@ void onLongPressBTN0()
 /******************
  * BTN1 Callbacks *
  ******************/
-void onCountBTN1()
+void onRisingBTN1()
 {
     gauge.indicateR((uint8_t)0b111);
 }
 
-void onPressBTN1()
+void onPressedBTN1()
 {
     Logger.info.println("BTN1 pressed");
     switch (myDE1.getState())
@@ -262,7 +264,7 @@ void onLongPressBTN1()
     }
 }
 
-// void onLongReleaseBTN1()
+// void onLongPressStopBTN1()
 // {
 //     Logger.info.println("BTN1 Long released");
 // }
