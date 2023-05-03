@@ -4,9 +4,9 @@
 DEState::DEState(mutex_t *mutex)
 {
     _mutex = mutex;
-    _state = Idle;//Init;
-    _substate = NoState;
-    _pressure = 0;
+    _state = Idle;       // Init might make more sense, but we get into a weird
+    _substate = NoState; // state if we reset Peridot and not DE1, since it doesn't
+    _pressure = 0;       // report current state, only transitions so Idle for now
     _flow = 0;
 }
 
@@ -87,7 +87,7 @@ bool DEState::updateFromStateInfo(const uint8_t *buf, size_t len)
         readState = (DE_MachineState_t)((nybbleHigh << 4) | nybbleLow);
         if (_state != readState)
         {
-            newState(readState);
+            newState(readState); // mutex inside newState()
             updatedState = true;
         }
     }
@@ -99,7 +99,7 @@ bool DEState::updateFromStateInfo(const uint8_t *buf, size_t len)
         readSubstate = (DE_MachineSubstate_t)((nybbleHigh << 4) | nybbleLow);
         if (_substate != readSubstate)
         {
-            newSubstate(readSubstate);
+            newSubstate(readSubstate); // mutex inside newSubstate()
             updatedSubstate = true;
         }
     }
@@ -156,16 +156,16 @@ float DEState::getFlowDecimal()
 
 void DEState::newState(DE_MachineState_t nextState)
 {
-    _statePrev = _state;
     mutex_enter_blocking(_mutex);
+    _statePrev = _state;
     _state = nextState;
     mutex_exit(_mutex);
 }
 
 void DEState::newSubstate(DE_MachineSubstate_t nextSubstate)
 {
-    _substatePrev = _substate;
     mutex_enter_blocking(_mutex);
+    _substatePrev = _substate;
     _substate = nextSubstate;
     mutex_exit(_mutex);
 }
