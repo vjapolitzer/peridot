@@ -4,12 +4,7 @@ PeridotGauge::PeridotGauge(uint8_t pin, bool invert)
 {
     _inverted = invert;
     _gaugeBrightness = DEFAULT_BRIGHTNESS;
-    _inc = (_gaugeBrightness / (INDICATE_T / GAUGE_UPDATE_MS));
-    // for (int i = 0; i < 2; i++)
-    // {
-    //     _indR[i] = 0;
-    //     _indL[i] = 0;
-    // }
+    _indStep = (_gaugeBrightness / (INDICATE_T / GAUGE_UPDATE_MS));
     _pixels = new NeoPixelConnect(pin, NEOPIXEL_RING_SIZE);
 }
 
@@ -42,18 +37,18 @@ bool PeridotGauge::update()
     {   
         this->clear(); // zero out the display array for updating. Enough overhead to lazily
                        // zero the whole thing instead of only updating changed pixels
-        if (_myDE1->getState() == Espresso) // TODO: make DEState type state machine to track transitions, etc
-        {
+        if (_myDE1->getState() == Espresso) // TODO: consider making PeridotGauge a DEState-type
+        {                                   //       state machine to track transitions, etc
             this->_drawDial(_myDE1->getPressure(), GREEN, true);
             this->_drawDial(_myDE1->getFlow(), BLUE, true);
         }
         if (_indR[1] > 0)
         {
-            this->drawIndR();
+            this->_drawIndR();
         }
         if (_indL[1] > 0)
         {
-            this->drawIndL();
+            this->_drawIndL();
         }
 
         this->show();
@@ -80,11 +75,11 @@ void PeridotGauge::indicateL(uint8_t c)
     _indL[1] = _gaugeBrightness;
 }
 
-void PeridotGauge::drawIndR(bool gammaCorrect)
+void PeridotGauge::_drawIndR(bool gammaCorrect)
 {
     uint8_t c = _indR[0]; // TODO: Unified function to eliminate repeated code, with bit param to indicate L vs R.
     uint8_t indBrightness = _indR[1];
-    uint8_t adjBrightness = (indBrightness / _inc) * (_inc - 4);
+    uint8_t adjBrightness = (indBrightness / _indStep) * (_indStep - 4);
     uint8_t brightness;
 
     for (uint8_t i = 0; i < 3; i++)
@@ -93,15 +88,15 @@ void PeridotGauge::drawIndR(bool gammaCorrect)
         _pixels->setPixel(i, (1 & c) * brightness, 
                           (1 & (c >> 1)) * brightness, (1 & (c >> 2)) * brightness, gammaCorrect);
     }
-    indBrightness -= _inc;
+    indBrightness -= _indStep;
     _indR[1] = indBrightness;
 }
 
-void PeridotGauge::drawIndL(bool gammaCorrect)
+void PeridotGauge::_drawIndL(bool gammaCorrect)
 {
     uint8_t c = _indL[0];
     uint8_t indBrightness = _indL[1];
-    uint8_t adjBrightness = (indBrightness / _inc) * (_inc - 4);
+    uint8_t adjBrightness = (indBrightness / _indStep) * (_indStep - 4);
     uint8_t brightness;
 
     for (uint8_t i = 0; i < 3; i++)
@@ -111,7 +106,7 @@ void PeridotGauge::drawIndL(bool gammaCorrect)
                           (1 & c) * brightness, (1 & (c >> 1)) * brightness, (1 & (c >> 2)) * brightness, gammaCorrect);
     }
 
-    indBrightness -= _inc;
+    indBrightness -= _indStep;
     _indL[1] = indBrightness;
 }
 

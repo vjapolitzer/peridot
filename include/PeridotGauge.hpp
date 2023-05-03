@@ -30,7 +30,7 @@ public:
     /******************
      * User Functions *
      ******************/
-    /// @brief Update the LED state machine
+    /// @brief Call in main loop to update the display/LEDs
     /// @return True if the display was updated
     bool update();
 
@@ -53,13 +53,14 @@ public:
     void setBrightness(uint8_t brightness);
 
 private:
-    bool _inverted;
-    NeoPixelConnect* _pixels;
-    uint8_t _gaugeBrightness;
-    uint8_t _inc;
-    uint8_t _indR[2] = { 0 };
-    uint8_t _indL[2] = { 0 };
-    DEState *_myDE1;
+    bool _inverted;           // Used if we want to invert the "+" direction along the LED array
+    NeoPixelConnect* _pixels; // For controlling our pretty LEDs
+    uint8_t _gaugeBrightness; // Brightness setting for the gauge (currently doesn't change after init)
+    uint8_t _indStep;         // Brightness step size for LED indication 
+    uint8_t _indR[2] = { 0 }; // _indR/L[0] is color bit mask for the LED indication, _indR/L[1] doubles
+    uint8_t _indL[2] = { 0 }; // as isIndicating flag and current brightness of the LED indication
+
+    DEState *_myDE1;          // Updated by the Serial objects, used for gauge to track state
 
     /// @brief Pass raw pressure or flow + color, draws dial
     /// display onto the RGB buffer
@@ -69,10 +70,10 @@ private:
     void _drawDial(uint16_t dataRaw, color_t color, bool gammaCorrect = true);
 
     /// @brief Draw indicate right animation
-    void drawIndR(bool gammaCorrect = true);
+    void _drawIndR(bool gammaCorrect = true);
 
     /// @brief Draw indicate left animation
-    void drawIndL(bool gammaCorrect = true);
+    void _drawIndL(bool gammaCorrect = true);
 };
  
 #endif
