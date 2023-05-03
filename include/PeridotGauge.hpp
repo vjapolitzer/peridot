@@ -43,10 +43,10 @@ public:
     void indicateL(uint8_t c);
 
     /// @brief Clear the RGB buffer
-    void clear();
+    void clear(); // Move to private?
 
     /// @brief Write the RGB buffer to the LEDs
-    void show();
+    void show(); // Move to private?
 
     /// @brief Set the target/maximum LED brightness
     /// @param brightness: brightness value (0-255)
@@ -55,7 +55,7 @@ public:
 private:
     bool _inverted;           // Used if we want to invert the "+" direction along the LED array
     NeoPixelConnect* _pixels; // For controlling our pretty LEDs
-    uint8_t _gaugeBrightness; // Brightness setting for the gauge (currently doesn't change after init)
+    uint8_t _gaugeBrightness; // Brightness setting for the gauge
     uint8_t _indStep;         // Brightness step size for LED indication 
     uint8_t _indR[2] = { 0 }; // _indR/L[0] is color bit mask for the LED indication, _indR/L[1] doubles
     uint8_t _indL[2] = { 0 }; // as isIndicating flag and current brightness of the LED indication

@@ -1,8 +1,6 @@
 #include "config.hpp"
 #include "PeridotSerial.hpp"
 
-// extern char print_buf[];
-
 extern bool de1Initialized;
 
 PeridotSerial::PeridotSerial(SerialUART *serial, mutex_t *mutex)
@@ -19,7 +17,7 @@ PeridotSerial::PeridotSerial(SerialUART *serial, mutex_t *mutex)
     {
         sprintf(_serialName, "Serial_BLE");
     }
-    // TODO make error if serial isn't valid
+    // TODO: make error if serial isn't valid
 }
 
 PeridotSerial::~PeridotSerial()
@@ -40,32 +38,6 @@ void PeridotSerial::setDEState(DEState *myDE1)
 void PeridotSerial::begin()
 {
     _readBufIndex = 0;
-    // if (_serial == &SERIAL_DE_UART)
-    // {
-    //     // sprintf(_serialName, "Serial_DE1");
-    //     _serial->setRX(SERIAL_DE_RX_PIN);
-    //     _serial->setTX(SERIAL_DE_TX_PIN);
-    //     // pinMode(SERIAL_DE_RTS_PIN, INPUT);
-    //     // pinMode(SERIAL_DE_CTS_PIN, INPUT);
-    //     // _serial->setRTS(SERIAL_DE_RTS_PIN);
-    //     // _serial->setCTS(SERIAL_DE_CTS_PIN);
-    //     _serial->begin(UART_BAUD, SERIAL_PARAM);
-    //     // gpio_pull_up(SERIAL_DE_RX_PIN);  // suppress noise if DE not attached: Does Peridot need this?
-    //     // gpio_pull_down(SERIAL_DE_CTS_PIN);  // suppress noise if DE not attached: Does Peridot need this?
-    // }
-    // else if (_serial == &SERIAL_BLE_UART)
-    // {
-    //     // sprintf(_serialName, "Serial_BLE");
-    //     _serial->setRX(SERIAL_BLE_RX_PIN);
-    //     _serial->setTX(SERIAL_BLE_TX_PIN);
-    //     // pinMode(SERIAL_BLE_RTS_PIN, INPUT);
-    //     // pinMode(SERIAL_BLE_CTS_PIN, INPUT);
-    //     // _serial->setRTS(SERIAL_BLE_RTS_PIN);
-    //     // _serial->setCTS(SERIAL_BLE_CTS_PIN);
-    //     _serial->begin(UART_BAUD, SERIAL_PARAM);
-    //     // gpio_pull_up(SERIAL_BLE_RX_PIN);  // suppress noise if BLE not attached: Does Peridot need this?
-    //     // gpio_pull_down(SERIAL_DE_CTS_PIN);  // suppress noise if DE not attached: Does Peridot need this?
-    // }
     _serial->begin(UART_BAUD, SERIAL_PARAM);
     Logger.info.printf("Started interface %s\n", _serialName);
 }
@@ -82,7 +54,6 @@ bool PeridotSerial::update()
     while (_serial->available() && _readBufIndex < READ_BUFFER_SIZE)
     {
         _readBuf[_readBufIndex] = _serial->read();
-        // _readBufIndex++;
         didRead = true;
         if (_readBuf[_readBufIndex++] == '\n') // increment to put us in position for the null terminator
         {
@@ -95,15 +66,13 @@ bool PeridotSerial::update()
                 _myDE1->update(_readBuf, _readBufIndex);
             }
 
-            if (relay())
+            if (this->relay())
             {
                 _readBufIndex = 0;
             }
         }
     }
-    // If we are receiving messages longer than the buffer, this prevents overflow and/or blocking
-    // Typically this only happens when noise is coming in on the BLE UART, or if baud rates    
-    // are misconfigured, as the buffer size ought to be longer than the maximum DE1 does message length  
+    // Protect against buffer overflow issues. This shouldn't happen, but handle it in case.  
     if (_readBufIndex >= READ_BUFFER_SIZE)
     {
         Logger.warning.printf("WARNING: Read Buffer Overrun on interface %s -- flushing.\n", _serialName);
@@ -117,8 +86,8 @@ bool PeridotSerial::update()
 
 bool PeridotSerial::relay()
 {
-    return _serialPartner->write(_readBuf, _readBufIndex);
-    // if (_serialPartner->write(_readBuf, _readBufIndex))
+    return _serialPartner->peridotWrite(_readBuf, _readBufIndex);
+    // if (_serialPartner->peridotWrite(_readBuf, _readBufIndex))
     // {
     //     _readBufIndex = 0;
     //     return true;
@@ -126,20 +95,12 @@ bool PeridotSerial::relay()
     // return false;
 }
 
-bool PeridotSerial::write(const uint8_t *buf, size_t len)
+bool PeridotSerial::peridotWrite(const uint8_t *buf, size_t len)
 {
     bool didWrite = false;
     mutex_enter_blocking(_mutex);
     didWrite = _serial->write(buf, len) > 0;
     Logger.debug.printf("Send message to %s:\n %s", _serialName, buf);
-    // if (_serial->availableForWrite())
-    // {
-    //     // This if statement is used to prevent blocking in a case where (e.g. HW flow control) is causing
-    //     // a UART to overflow its buffers.  The behavior is to drop writes and log warnings.  
-    //     // TODO: Check RP2040 UART buffer size
-    //     didWrite = _serial->write(buf, len) > 0;
-    //     Logger.debug.printf("Send message to %s:\n %s", _serialName, buf);
-    // }
     mutex_exit(_mutex);
     if (!didWrite)
         Logger.warning.printf("WARNING: Interface %s send buffer full \n", _serialName);
@@ -161,13 +122,6 @@ void cleanBuf(uint8_t *buf, uint16_t &len, char *serialName)
     }
     if (len < READ_BUFFER_SIZE)
     {
-        buf[len] = 0; // force null termination for niceness
+        buf[len] = 0; // null termination
     }
 }
-
-// void debugHandler(uint8_t *buf, uint16_t &len) {
-//   if (strncmp((char *)buf, "HEAP", 4) == 0) {
-//     Logger.info.printf("Free Heap: %d\n", esp_get_free_heap_size());
-//     len=0;
-//   }
-// }

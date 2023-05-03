@@ -6,7 +6,7 @@ bool sendStateRequest(DE_MachineState_t reqState)
     sprintf(cmd, "<B>%02X\n",reqState);
     // Logger.info.printf("%s",cmd);
     // return true;
-    return de1Serial.write((const uint8_t *)cmd, 7);
+    return de1Serial.peridotWrite((const uint8_t *)cmd, 7);
 }
 
 /******************

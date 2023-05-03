@@ -21,7 +21,7 @@ bool PeridotGauge::update()
     // {
     //     _pixels->setPixelValue((p+NEOPIXEL_RING_SIZE-1)%NEOPIXEL_RING_SIZE, BLUE, 0, true);
     //     _pixels->setPixelValue(p, BLUE, 222, true);
-    //     this->show();
+    //     PeridotGauge::show();
     //     p = (p + 1) % NEOPIXEL_RING_SIZE;
     //     prevTime = currTime;
     // }
@@ -35,23 +35,23 @@ bool PeridotGauge::update()
 
     if ((_myDE1 != NULL) && (currTime - prevTime > GAUGE_UPDATE_MS))
     {   
-        this->clear(); // zero out the display array for updating. Enough overhead to lazily
-                       // zero the whole thing instead of only updating changed pixels
+        PeridotGauge::clear(); // zero out the display array for updating. Enough overhead to lazily
+                               // zero the whole thing instead of only updating changed pixels
         if (_myDE1->getState() == Espresso) // TODO: consider making PeridotGauge a DEState-type
         {                                   //       state machine to track transitions, etc
-            this->_drawDial(_myDE1->getPressure(), GREEN, true);
-            this->_drawDial(_myDE1->getFlow(), BLUE, true);
+            PeridotGauge::_drawDial(_myDE1->getPressure(), GREEN, true);
+            PeridotGauge::_drawDial(_myDE1->getFlow(), BLUE, true);
         }
         if (_indR[1] > 0)
         {
-            this->_drawIndR();
+            PeridotGauge::_drawIndR();
         }
         if (_indL[1] > 0)
         {
-            this->_drawIndL();
+            PeridotGauge::_drawIndL();
         }
 
-        this->show();
+        show();
         prevTime = currTime;
         return true;
     }

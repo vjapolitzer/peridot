@@ -36,13 +36,13 @@ void setup()
 
     SERIAL_BLE_UART.setTX(SERIAL_BLE_TX_PIN);
     SERIAL_BLE_UART.setRX(SERIAL_BLE_RX_PIN);
-    // SERIAL_BLE_UART.setCTS(SERIAL_BLE_CTS_PIN);
-    // SERIAL_BLE_UART.setRTS(SERIAL_BLE_RTS_PIN);
-    gpio_pull_up(SERIAL_BLE_RX_PIN);  // suppress noise if BLE not attached: Does Peridot need this?
+    // SERIAL_BLE_UART.setCTS(SERIAL_BLE_CTS_PIN); // Just kidding, Decent doesn't use flow control but some odd
+    // SERIAL_BLE_UART.setRTS(SERIAL_BLE_RTS_PIN); // pin thing. I connected it through between BLE and DE1.
+    // gpio_pull_up(SERIAL_BLE_RX_PIN);  // suppress noise if BLE not attached: Does Peridot need this?
 
     SERIAL_DE_UART.setTX(SERIAL_DE_TX_PIN);
     SERIAL_DE_UART.setRX(SERIAL_DE_RX_PIN);
-    gpio_pull_up(SERIAL_DE_RX_PIN);  // suppress noise if DE not attached: Does Peridot need this?
+    // gpio_pull_up(SERIAL_DE_RX_PIN);  // suppress noise if DE not attached: Does Peridot need this?
 
     bleSerial.setPartner(&de1Serial);
     de1Serial.setPartner(&bleSerial);

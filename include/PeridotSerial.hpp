@@ -57,9 +57,10 @@ public:
     /// @return True if data was written to partner
     bool relay();
 
-    /// @brief Writes all the contents of buf to self's serial
+    /// @brief Mutex protected write. (Don't inject from core1 while core0 is writing.) 
+    ///        Partner can also use to write to this's serial.
     /// @return True if data was written to Serial
-    bool write(const uint8_t *buf, size_t len);
+    bool peridotWrite(const uint8_t *buf, size_t len);
 
 private:
     SerialUART *_serial;
